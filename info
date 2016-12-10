@@ -60,7 +60,19 @@ path_function() {
     light_function  # goes to the light setting function
 }
 
-# main function
+
+# main functions
+
+# cheks if you have xbacklight installed
+xbacklight_installed=$(dpkg -l | grep -i xbacklight)
+if [ "$xbacklight_installed" = "" ]; then
+  echo "You don't have xbacklight installed"
+  exit
+else
+  break
+fi
+
+# main program
 if [ $ok_enter = '0' ]; then
   ok_enter='1'      # one-time run variable
   path_function     # starts the script
