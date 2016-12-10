@@ -3,5 +3,60 @@
 addr="$HOME/.profile"
 # set the backlight porcentage as you like in the variable
 light="60"
-sed -i -e '$a\# backlight program' '\' $addr 2> /dev/null  # adds the coment
-sed -i -e '$a\xbacklight -set '$light'\' $addr 2> /dev/null # adds the command
+
+ok_enter='0'
+
+# adding the command
+add_function() {
+  sed -i -e '$a\# backlight program' '\' $addr 2> /dev/null  # adds the coment
+  sed -i -e '$a\xbacklight -set '$light'\' $addr 2> /dev/null # adds the command
+  echo "Done :)"
+  exit
+}
+
+#Light function
+light_function(){
+  echo -n "Do you want to change the brightness (y/n/test)? (default is $light%) \n"
+    read answer
+    if echo "$answer" | grep -iq "^y" ;then
+      echo
+      echo -n "Which one? \n"
+      read answer
+      light="$answer"
+    elif [ $answer = 'test' ]; then
+      current_light=$(xbacklight -get | cut -d "." -f1)
+      for i in 0 10 20 30 40 50 60 70 80 90 100
+        do
+          echo "this is $i"
+          xbacklight -set $i
+          sleep 1
+      done
+      xbacklight -set $current_light
+      light_function
+    else
+      echo "Good, $light it is."
+    fi
+    add_function
+}
+
+# path function
+path_function() {
+  echo -n "Is this path correct (y/n)? ($addr) "
+    read answer
+    if echo "$answer" | grep -iq "^y" ;then
+      echo okay
+    else
+      echo -n "Write another path... \n"
+        read answer
+          [ -e "$answer" ] && echo "Directory $answer exists. \n"  || echo "Error: Directory $answer does not exists."
+          addr="$answer"
+          light_function
+    fi
+}
+
+if [ $ok_enter = '0' ]; then
+  ok_enter='1'
+  path_function
+else
+  exit
+fi
