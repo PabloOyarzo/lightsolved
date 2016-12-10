@@ -1,6 +1,6 @@
 #!/bin/sh
 # this makes the command to excute on each login
-addr="$HOME/test.txt"
+addr="$HOME/.profile"
 # set the backlight porcentage as you like in the variable
 light="60"
 sed -i -e '$a\# backlight program' '\' $addr 2> /dev/null  # adds the coment
