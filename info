@@ -1,62 +1,69 @@
 #!/bin/sh
+
+# ---- Variables ----
 # this makes the command to excute on each login
 addr="$HOME/.profile"
 # set the backlight porcentage as you like in the variable
 light="60"
-
+# one-time run variable
 ok_enter='0'
 
-# adding the command
+# this function for adding the command to the wanted script
+# adding lines at the end of the script
 add_function() {
-  sed -i -e '$a\# backlight program' '\' $addr 2> /dev/null  # adds the coment
+  sed -i -e '$a\# backlight program' '\' $addr 2> /dev/null   # adds the coment
   sed -i -e '$a\xbacklight -set '$light'\' $addr 2> /dev/null # adds the command
   echo "Done :)"
-  exit
+  exit          # ends the program
 }
 
-#Light function
+# you can tweak the starting brightness level interactively
 light_function(){
-  echo -n "Do you want to change the brightness (y/n/test)? (default is $light%) \n"
-    read answer
-    if echo "$answer" | grep -iq "^y" ;then
+  echo -n "Do you want to change the brightness (y/n/test)? (default is $light%) \n" # prompts the question
+    read answer       # makes the response a variable
+    if echo "$answer" | grep -iq "^y" ;then   # if 'y'es then.
       echo
-      echo -n "Which one? \n"
+      echo -n "Which one? \n"   # prompts the a new question
       read answer
-      light="$answer"
-    elif [ $answer = 'test' ]; then
-      current_light=$(xbacklight -get | cut -d "." -f1)
+      light="$answer"           # sets the new light level
+    elif [ $answer = 'test' ]; then       # test levels 10 by 10
+      current_light=$(xbacklight -get | cut -d "." -f1)   # saves the current light level for later
       for i in 0 10 20 30 40 50 60 70 80 90 100
         do
-          echo "this is $i"
+          echo "This is $i"
           xbacklight -set $i
           sleep 1
       done
-      xbacklight -set $current_light
+      xbacklight -set $current_light    # sets former light level
       light_function
     else
-      echo "Good, $light it is."
+      echo "Good, $light it is."        # sets the default light level
     fi
-    add_function
+    add_function      # goes to the final function
 }
 
-# path function
+# this function is to confirm the script that you want the line on.
+# on Ubuntu should be the default ~/.profile
 path_function() {
-  echo -n "Is this path correct (y/n)? ($addr) "
+  echo -n "Is this path correct (y/n)? ($addr) "  # prompts the question
     read answer
     if echo "$answer" | grep -iq "^y" ;then
       echo okay
     else
       echo -n "Write another path... \n"
         read answer
-          [ -e "$answer" ] && echo "Directory $answer exists. \n"  || echo "Error: Directory $answer does not exists."
-          addr="$answer"
-          light_function
+          # checks if the dir exists, if it does saves it;
+          # if it doesn't prompts the question again
+          [ -e "$answer" ] && echo "Directory $answer exists. \n"  || echo "Error: Directory $answer does not exists." && path_function
+          addr="$answer"    # saves the new path
     fi
+    light_function  # goes to the light setting function
 }
 
+# main function
 if [ $ok_enter = '0' ]; then
-  ok_enter='1'
-  path_function
+  ok_enter='1'      # one-time run variable
+  path_function     # starts the script
 else
   exit
 fi
