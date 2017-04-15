@@ -9,7 +9,6 @@ the .profile of my main user, and starts at
 
 #Steps to follow
 
-1- Make sure you have xbacklight program install on your Linux.
-2- Give execution permissions to the script. (sudo chmod +x info)
-3- Follow the instructions and read the comments of the script if anything
-    looks weird.
+1. Make sure you have xbacklight program install on your Linux.
+2. Give execution permissions to the script. (sudo chmod +x info)
+3. Follow the instructions and read the comments of the script if anything looks weird.
